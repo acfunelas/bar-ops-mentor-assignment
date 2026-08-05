@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Operations - Mentor Lookup</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        violet: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                            950: '#2e1065',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-violet-50 via-white to-violet-100/50 font-sans text-slate-800 min-h-screen flex flex-col justify-between pt-0 px-4 sm:px-6">
+
+    <header class="text-white shadow-xl border-b-4 border-gold-500 relative overflow-hidden -mx-4 sm:-mx-6" style="background-color: #2E054E;">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-center relative z-10">
+            <div class="flex justify-center items-center space-x-6 mb-6">
+                <img src="PLS LOGO.png" alt="PLS Centurion Bar Ops Logo" class="h-28 w-auto">
+            </div><div class="flex justify-center items-center text-gold-500 font-semibold tracking-widest text-sm mb-3 uppercase">
+                Philippine Law School
+                <br>
+                Centurion Bar Operations
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-xl mx-auto my-auto py-6 space-y-6">
+        
+        <!-- Header Text -->
+        <div class="text-center space-y-2">
+            <h2 class="text-2xl sm:text-3xl font-bold text-violet-950 tracking-tight">
+                Find Your Assigned Mentor
+            </h2>
+            <p class="text-slate-600 text-xs sm:text-sm max-w-md mx-auto">
+                Enter your registered examinee email address below to display your attorney mentor.
+            </p>
+        </div>
+
+        <!-- Search Input Form -->
+        <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-xl shadow-violet-100/80 border border-violet-100 space-y-4">
+            <form onsubmit="handleSearch(event)" class="space-y-3">
+                <label for="emailInput" class="block text-xs font-bold text-violet-900 uppercase tracking-wider">
+                    Examinee Email Address
+                </label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-violet-400">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <input type="email" id="emailInput" required autocomplete="email" placeholder="Enter your email address..." 
+                            class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-violet-50/50 border border-violet-200 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:bg-white text-sm transition-all">
+                    </div>
+                    <button type="submit" class="bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white font-semibold px-7 py-3.5 rounded-2xl text-sm transition-all shadow-md shadow-violet-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="resultContainer" class="transition-all duration-300">
+            
+            <!-- Default Waiting State -->
+            <div id="initialState" class="bg-white/60 rounded-3xl p-8 text-center border border-dashed border-violet-200">
+                <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center mx-auto mb-3 text-lg">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <p class="text-sm font-semibold text-violet-950">Awaiting Search Input</p>
+                <p class="text-xs text-slate-500 mt-1">Please enter your registered email address to view your assigned attorney mentor.</p>
+            </div>
+
+            <!-- Match Found State -->
+            <div id="matchResult" class="hidden bg-white rounded-3xl border-2 border-violet-200 p-6 sm:p-7 shadow-xl shadow-violet-100 space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b border-violet-100">
+                    <div class="flex items-center gap-2 text-xs font-bold text-violet-700 bg-violet-50 px-3 py-1.5 rounded-full border border-violet-200">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                        <span>Mentorship Assignment Confirmed</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Mentee Box -->
+                    <div class="bg-violet-50/60 p-4 rounded-2xl border border-violet-100 space-y-1">
+                        <span class="text-[10px] font-bold text-violet-600 uppercase tracking-wider block">Examinee Name</span>
+                        <h3 class="font-bold text-slate-900 text-base" id="resMenteeName">--</h3>
+                        <p class="text-xs text-violet-700 font-mono truncate pt-0.5" id="resMenteeEmail">--</p>
+                    </div>
+
+                    <!-- Mentor Box -->
+                    <div class="bg-violet-600 text-white p-4 sm:p-5 rounded-2xl shadow-md space-y-1.5 relative overflow-hidden flex flex-col justify-center">
+                        <div class="absolute -right-3 -bottom-3 opacity-10 text-6xl pointer-events-none">
+                            <i class="fa-solid fa-gavel"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-violet-200 uppercase tracking-wider block">Assigned Mentor</span>
+                        <h3 class="font-bold text-lg text-white leading-snug" id="resMentorName">--</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Not Found State -->
+            <div id="notFoundState" class="hidden bg-white rounded-3xl border border-rose-200 p-7 text-center shadow-lg space-y-3">
+                <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">Email Not Found</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto">
+                    We could not find an assigned mentor for <span id="notFoundEmail" class="font-mono font-semibold text-rose-600 break-all">--</span>. Please double-check your email spelling or contact Bar Operations.
+                </p>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-xl mx-auto text-center text-xs text-slate-400 py-6">
+        Bar Operations Mentorship Directory &bull;
+    </footer>
+
+    <script>
+        // Encoded Bar Operations Mentor Dataset directly embedded into the application
+        const MENTOR_DATA = [
+    { menteeName: "Abadilla, Cyril C", menteeEmail: "pntccy@gmail.com", mentorName: "Arenas" },
+    { menteeName: "Acosta, Jay T", menteeEmail: "jaylordacosta@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "Alejos, Jenaline DC", menteeEmail: "alejosjenaline@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "ASINO, Krystal R", menteeEmail: "krystalreyesasino@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "AWATIN, Ma. Joannalyn E.", menteeEmail: "echano.anne@gmail.com", mentorName: "Olivar" },
+    { menteeName: "BABIDA, Christine Joy M.", menteeEmail: "tinebabida08@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "BARCELONA, Dennis Creach S.", menteeEmail: "creachbarcelona@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "Binondo, Mark Christian B", menteeEmail: "mbinondolaw@gmail.com", mentorName: "Petrache" },
+    { menteeName: "BONIFACIO, Jannelle V.", menteeEmail: "jannellebonifacio@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Buere, Jecelle I.", menteeEmail: "jessbuere221b@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Cadigal-Bumolyad, Maria Danica B.", menteeEmail: "akosiikayes@gmail.com", mentorName: "Arenas" },
+    { menteeName: "CADIGAL-PINAT, Ayra Angeline B.", menteeEmail: "aabcadigalpinat@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "CALICDAN, LEVI MARCO", menteeEmail: "marco.calicdan@gmail.com", mentorName: "Barquez" },
+    { menteeName: "CASTRO, Karl Aldwin D.", menteeEmail: "karlaldwincastro@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Doria, Dianne Grace B", menteeEmail: "doria.diannegrace@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "DUNCAN, Maricar O.", menteeEmail: "maricar.duncan@me.com", mentorName: "Gaerlan" },
+    { menteeName: "Escala, Roezell Anne L.", menteeEmail: "escalaroezell@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "ESCAMILLA, Rodcenmarie A.", menteeEmail: "cenescamilla@gmail.com", mentorName: "De Veyra" },
+    { menteeName: "Esquillo,Rachelle France C", menteeEmail: "rachellefrance24@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "FLORES, PRIMROSE, M.", menteeEmail: "primrose037@gmail.com", mentorName: "Calugay" },
+    { menteeName: "GARDIOLA, JOHN MAVERICK L.", menteeEmail: "juannewington@gmail.com", mentorName: "Ahmed" },
+    { menteeName: "Gawat, Ron D.", menteeEmail: "captainrongawat15@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Geneblasco, Janet T.", menteeEmail: "stormsbucket@gmail.com", mentorName: "Olivar" },
+    { menteeName: "Ignacio, Rudy Jr. B", menteeEmail: "ignaciorudy@gmail.com", mentorName: "Gaerlan" },
+    { menteeName: "Lacpapan, Hyzzel C.", menteeEmail: "hyzzellacpapan@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Madayag, Dave B.", menteeEmail: "deemadrev@gmail.com", mentorName: "Diaz" },
+    { menteeName: "MATILDO, Florlyn D.", menteeEmail: "florlyn.matildo@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "MENDOZA, Hannah G", menteeEmail: "hunnah@gmail.com", mentorName: "Petrache" },
+    { menteeName: "RAPIÑAN, Frederick B.", menteeEmail: "frederick.rapinan@gmail.com", mentorName: "Gaerlan" },
+    { menteeName: "Ravilas Judilyn U", menteeEmail: "dlosfiles@gmail.com", mentorName: "Ed Vincent Albano III" },
+    { menteeName: "Revilla, Patricia R.", menteeEmail: "pat.revilla@yahoo.com", mentorName: "WM ay-ay" },
+    { menteeName: "ROXAS, RAFAEL JR., B.", menteeEmail: "rafaelroxasjr.bar2026@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "Samson, Approhdite", menteeEmail: "applesamson2023@gmail.com", mentorName: "Atty. Akemi Aida" },
+    { menteeName: "Villanueva, Arvin Jay C.", menteeEmail: "arvinjayz.villanueva@gmail.com", mentorName: "España" },
+    { menteeName: "VILLANUEVA, Paula Gelou S", menteeEmail: "paulagelouvillanueva@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "OBANA, Merenissa C", menteeEmail: "merenissaobana@gmail.com", mentorName: "Ferolino" },
+    { menteeName: "Garado, Alex A", menteeEmail: "alex30garado@gmail.com", mentorName: "Enzo Delgado" },
+    { menteeName: "RAMOS, Arthur Aldrin R.", menteeEmail: "arthuraldrinramos@gmail.com", mentorName: "Arenas" },
+    { menteeName: "IGNACIO, Maria Rafaela M", menteeEmail: "rafaignacio001@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "VILLAMOR, Cheryl Mae L", menteeEmail: "cherylmaev@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "CAÑIZARES, Sedfrey, F", menteeEmail: "sedfrey0625@gmail.com", mentorName: "Endaya" },
+    { menteeName: "Espino, Allen Joyce B.", menteeEmail: "allenjoyceespino@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "LOPEZ, Angela Grace P.", menteeEmail: "agplopez222@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Rabara, Heinrick G.", menteeEmail: "hgrabara.lawbooks@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "Lagarde, Lorena C.", menteeEmail: "lorena.lagarde2024@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Abuniawan-Jardin, Nheky A", menteeEmail: "nhekyabuniawan1995@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "TUBAÑA, Isidro Jr. T.", menteeEmail: "juntubana79@gmail.com", mentorName: "Santiago" },
+    { menteeName: "BERNABAT, John Romeo P", menteeEmail: "romeo.bernabat@gmail.com", mentorName: "Carlo Pascual" },
+    { menteeName: "MAMAT, Israel B.", menteeEmail: "israelmamat@gmail.com", mentorName: "Lampa" },
+    { menteeName: "Hadjula, Adzfar R.", menteeEmail: "hadzfar23@gmail.com", mentorName: "Gaerlan" },
+    { menteeName: "De Vera, Mari Joy", menteeEmail: "marijoyparas@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Baria ,Josefa", menteeEmail: "katzunekojyou1234@gmail.com", mentorName: "Valdez" },
+    { menteeName: "SAPLALA, John Jowell P.", menteeEmail: "saplalajohn2@gmail.com", mentorName: "Olivar" },
+    { menteeName: "Bacarra, John Paul E.", menteeEmail: "johnpaulbacarra1803@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "PRADO, Kenneth D.", menteeEmail: "kdp080819@gmail.com", mentorName: "Petrache" },
+    { menteeName: "Bautista, Arnold C", menteeEmail: "sebastianjoseph0607@gmail.com", mentorName: "Paulo Reyes" },
+    { menteeName: "SALES, MariaDaisyN", menteeEmail: "daria.sales@hotmail.com", mentorName: "Galamgam" },
+    { menteeName: "MARQUEZ, KAREN B.", menteeEmail: "karenborjam@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Jeremiah Virata", menteeEmail: "jeromevirata@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "SEBASTIAN, Enrryson B.", menteeEmail: "enrrysonsebastian@gmail.com", mentorName: "Arenas" },
+    { menteeName: "LUCENA, Katrina, G.", menteeEmail: "katrinaglucena@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "TIPAN, Edmar L.", menteeEmail: "edtipan4@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "Carillo, Jahson E", menteeEmail: "jcarillo.dbi@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Abad, Aaron James", menteeEmail: "badijam03@gmail.com", mentorName: "Magadia" },
+    { menteeName: "CAYABYAB, Ma. Khristina J.", menteeEmail: "mkjcayabyab@gmail.com", mentorName: "Olivar" },
+    { menteeName: "LADERAS, Liemar B", menteeEmail: "jdliemarladeras@gmail.com", mentorName: "Villar" },
+    { menteeName: "Apao, Anne Laurince C.", menteeEmail: "0904anne@gmail.com", mentorName: "Gaerlan" },
+    { menteeName: "Dolor, Shiela Ann B", menteeEmail: "shedolor.law@gmail.com", mentorName: "Petrache" },
+    { menteeName: "LUBRICO, Ivy Hazel G.", menteeEmail: "lubrico.ivy.hazel@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Araneta, Mytchelle Yancy Abegail A.", menteeEmail: "aranetamya@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Tagumpay, Diwa Malaya A", menteeEmail: "dmat_16@yahoo.com", mentorName: "Arenas" },
+    { menteeName: "CATALUNA, RHONALYN F.", menteeEmail: "catalunarhonalyn@gmail.com", mentorName: "Barquez" },
+    { menteeName: "SIOCO, NONITO JR. C.", menteeEmail: "nonitosioco@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "SANCHEZ, Arnold C.", menteeEmail: "rob26_sanchez@yahoo.com", mentorName: "WM ay-ay" },
+    { menteeName: "Rodriguez, J.Warren C.", menteeEmail: "jwcrodriguez@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "VILLENA, Maryluz C.", menteeEmail: "cabalongamaryluz@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "BARAWED, ARJIE, M.", menteeEmail: "lordarjie25@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Nocum, Kristine Mae B.", menteeEmail: "kristinenocum.ucc@gmail.com", mentorName: "Liria-Alano" },
+    { menteeName: "BABAD, Liezel S.", menteeEmail: "liezelbabad@gmail.com", mentorName: "Olivar" },
+    { menteeName: "DELA CRUZ, Aris C", menteeEmail: "delacruzaris@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "LILANG, Karyl Anne P", menteeEmail: "karylanne69@gmail.com", mentorName: "Petrache" },
+    { menteeName: "CATELO, Sean A", menteeEmail: "seancatelo@gmail.com", mentorName: "Gaerlan" },
+    { menteeName: "Santos, Maria Antonette A.", menteeEmail: "eidaantheairis@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "CAIBIGAN, Viena Mira E", menteeEmail: "miyafilipina@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "VIRAY, Abraham F", menteeEmail: "virayabraham@gmail.com", mentorName: "Arenas" },
+    { menteeName: "Cervantes, Johnny T.", menteeEmail: "johnnytcervantes@gmail.com", mentorName: "Ordoñez" },
+    { menteeName: "Trucilla,Honey L", menteeEmail: "honeytrucilla@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "SANTIAGO, Tammy Jenn O.", menteeEmail: "tjordsanti@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "VILLAR, GLADINA ABILA", menteeEmail: "gladinavillara07@gmail.com", mentorName: "Calugay" },
+    { menteeName: "Estrada, Mark PJ A.", menteeEmail: "markpjestrada23@gmail.com", mentorName: "Olivar" },
+    { menteeName: "Braña Kenn D", menteeEmail: "kennbrana@gmail.com", mentorName: "Petrache" },
+    { menteeName: "Catulin, Vicente Jr., C.", menteeEmail: "catulinvicentejr7@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "CARILLO, JAHSON ESPIRITU", menteeEmail: "jhayz_carillo@yahoo.com", mentorName: "Endaya" },
+    { menteeName: "DAGANIO, ARISTON T.", menteeEmail: "daganioariston50@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Mendoza Nerisa M.", menteeEmail: "nerisamendoza1@gmail.com", mentorName: "De Veyra" },
+    { menteeName: "MOJARES, VERONICA C.", menteeEmail: "vcmojares11@gmail.com", mentorName: "Arenas" },
+    { menteeName: "Manzano, Jade P.", menteeEmail: "manzanojade1985@yahoo.com", mentorName: "Gaerlan" },
+    { menteeName: "Abu Karen May", menteeEmail: "karenmayabu682@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Madani, Princess Hayaminah G", menteeEmail: "princessmadani@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "BAUTISTA, ANTONIO M.", menteeEmail: "ambautista2004ph@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Pagharion-Griarte, Regina M.", menteeEmail: "regina.griarte001@deped.gov.ph", mentorName: "Masacayan" },
+    { menteeName: "ACEVEDO, Arjay, C.", menteeEmail: "acevedorj@ymail.com", mentorName: "Diaz" },
+    { menteeName: "CLARET, Jonathan D", menteeEmail: "athan.dc.17@gmail.com", mentorName: "Olivar" },
+    { menteeName: "BANAWAN, LIGAYA SARGA", menteeEmail: "banawanligaya51@gmail.com", mentorName: "Petrache" },
+    { menteeName: "OBRERO, Carll N.", menteeEmail: "carlo.obrero002@deped.gov.ph", mentorName: "WM ay-ay" },
+    { menteeName: "Ravilas, Judilyn U", menteeEmail: "andreacloe2020@gmail.com", mentorName: "Ed Vincent Albano III" },
+    { menteeName: "Astorga, Darmo Quiruben R", menteeEmail: "astorgadarmoquiruben@yahoo.com", mentorName: "Masacayan" },
+    { menteeName: "MUÑOZ, LORENZO REFORSADO", menteeEmail: "lrmunoz10@gmail.com", mentorName: "Quintos" },
+    { menteeName: "DE LEON, TRINA D.", menteeEmail: "trina.deleon1221@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Barbacena,Noel,B", menteeEmail: "noelbarbacena@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Estenzo, Den Carlo Q.", menteeEmail: "dcestenzo@gmail.com", mentorName: "Arenas" },
+    { menteeName: "Oltiveros, Mark Lester L.", menteeEmail: "lesterolti@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "Pantaleon,Maristela II A.", menteeEmail: "marispantaleon457@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Lazatin, Mark Emmanuel S.", menteeEmail: "mark.lazatin@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "Buenaobra, John Boy G", menteeEmail: "buenaobrajohnboy@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Sortijas Hyacinth", menteeEmail: "hs.afpcmos@gmail.com", mentorName: "Erika Santos" },
+    { menteeName: "Lim", menteeEmail: "iamleonard.m.lim@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "SANTILLAN, FEBIE ANN G.", menteeEmail: "santillanhannah6@gmail.com", mentorName: "Olivar" },
+    { menteeName: "Sunday ejiro", menteeEmail: "sundayejiro073@gmail.com", mentorName: "Petrache" },
+    { menteeName: "ERBON, ROMEO, N.", menteeEmail: "romyerbon123456@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Filomeno, Mary Grace T", menteeEmail: "mgtfilomeno@gmail.com", mentorName: "España" },
+    { menteeName: "DOMINGO, Noel F.", menteeEmail: "nfdomingo95@gmail.com", mentorName: "Arenas" },
+    { menteeName: "MOLINA, ROWENA B.", menteeEmail: "wengmolina2017@gmail.com", mentorName: "Eco Galvez" },
+    { menteeName: "PASCUAL, Crisfel A.", menteeEmail: "omteacherfel@gmail.com", mentorName: "Medina" },
+    { menteeName: "Del Rosario, Rommel A.", menteeEmail: "delrosarior1925@gmail.com", mentorName: "Garayblas" },
+    { menteeName: "Revilla, Patricia R", menteeEmail: "trishnam.026@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "Digermo-Siriban, Zoraida A.", menteeEmail: "zoraidasiriban@gmail.com", mentorName: "Masacayan" },
+    { menteeName: "Vergara, Tticia Anne Valerie Perez", menteeEmail: "ttriciavergara@gmail.com", mentorName: "WM ay-ay" },
+    { menteeName: "FELIX, Bernardino M. Jr.,", menteeEmail: "bernardinofelixjr@gmail.com", mentorName: "Olivar" },
+    { menteeName: "Gallantes, Janine C", menteeEmail: "jancasgall29@gmail.com", mentorName: "Petrache" },
+    { menteeName: "PAREDES, FRANCISCA", menteeEmail: "franceparedes194@gmail.com", mentorName: "Ramirez" },
+    { menteeName: "Caspe, Clark Matthew L.", menteeEmail: "caspe.clark.matt@gmail.com", mentorName: "Masacayan" },
+];
+
+        // Format mentor name with mandatory "Atty." prefix
+        function formatAttyName(name) {
+            if (!name) return "Atty. Unassigned";
+            let trimmed = name.trim();
+            if (/^atty\.?\s+/i.test(trimmed)) {
+                return trimmed.replace(/^atty\.?\s+/i, "Atty. ");
+            }
+            return "Atty. " + trimmed;
+        }
+
+        // Email search logic
+        function handleSearch(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            
+            const emailInput = document.getElementById('emailInput').value.trim().toLowerCase();
+            if (!emailInput) return;
+
+            const initialState = document.getElementById('initialState');
+            const matchResult = document.getElementById('matchResult');
+            const notFoundState = document.getElementById('notFoundState');
+
+            // Find match by email address
+            const match = MENTOR_DATA.find(item => item.menteeEmail.toLowerCase() === emailInput);
+
+            initialState.classList.add('hidden');
+
+            if (match) {
+                notFoundState.classList.add('hidden');
+                
+                document.getElementById('resMenteeName').innerText = match.menteeName;
+                document.getElementById('resMenteeEmail').innerText = match.menteeEmail;
+                document.getElementById('resMentorName').innerText = formatAttyName(match.mentorName);
+
+                matchResult.classList.remove('hidden');
+            } else {
+                matchResult.classList.add('hidden');
+                document.getElementById('notFoundEmail').innerText = emailInput;
+                notFoundState.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
